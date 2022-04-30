@@ -128,7 +128,7 @@ browser.is_element_present_by_css('div.list_text', wait_time=1)
 # 2. Create a list to hold the images and titles.
 hemisphere_image_urls = []
 
-all_hemis = browser.find_by_css('div.item')
+all_hemis = browser.find_by_css('a.product-item img')
 
 # 3. Write code to retrieve the image urls and titles for each hemisphere.
 for hemi in range(len(all_hemis)):
@@ -136,19 +136,11 @@ for hemi in range(len(all_hemis)):
     hemisphere = {}
     
     # Find and click hemi link
-    browser.find_by_css('a.itemLink img')[hemi].click()
+    browser.find_by_css('a.product-item img')[hemi].click()
     
     # Find the title and add to dictionary
     hemisphere["title"] = browser.find_by_css('h2.title').text
     
-    # Find the relative image url
-    #html = browser.html
-    #img_soup = soup(html, 'html.parser')
-    #img_url_rel = img_soup.find('img', class_="wide-image").get('src')
-    # Combine url with reletive url and add to dictionary
-    #hemisphere["img_url"] = f'{url}{img_url_rel}'
-
-
     # Next, we find the Sample image anchor tag and extract the href
     sample_elem = browser.links.find_by_text('Sample').first
     hemisphere['img_url'] = sample_elem['href']

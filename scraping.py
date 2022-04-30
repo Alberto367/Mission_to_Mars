@@ -18,8 +18,11 @@ def scrape_all():
         "news_paragraph": news_paragraph,
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
-        "last_modified": dt.datetime.now()
+        "last_modified": dt.datetime.now(),
+        "hemispheres": mars_hemispheres(browser)
     }
+
+
 
     # Stop webdriver and return data
     browser.quit()
@@ -97,6 +100,48 @@ def mars_facts():
 
     # Convert dataframe into HTML format, add bootstrap
     return df.to_html()
+
+def mars_hemispheres(browser):
+    # Use browser to visit the URL 
+    url = 'https://marshemispheres.com/'
+    browser.visit(url)
+
+    # Optional delay for loading the page
+    #browser.is_element_present_by_css('div.list_text', wait_time=1)
+
+    # Create a list to hold the images and titles.
+    hemisphere_image_urls = []
+    
+    try:
+        # Find common class for all links
+        all_hemis = browser.find_by_css('a.product-item img')
+
+        # 3. Write code to retrieve the image urls and titles for each hemisphere.
+        for hemi in range(len(all_hemis)):
+            # Create empty dictionary
+            hemisphere = {}
+            
+            # Find and click hemi link
+            browser.find_by_css('a.product-item img')[hemi].click()
+            
+            # Find the title and add to dictionary
+            hemisphere["title"] = browser.find_by_css('h2.title').text
+            
+            # Next, we find the Sample image anchor tag and extract the href
+            sample_elem = browser.links.find_by_text('Sample').first
+            hemisphere['img_url'] = sample_elem['href']
+
+            # Append dictionaries to list
+            hemisphere_image_urls.append(hemisphere)
+
+            # Go back in webpage
+            browser.back()
+        
+    except BaseException as e :
+        return e
+
+    return hemisphere_image_urls
+
 
 if __name__ == "__main__":
     # If running as script, print scraped data
